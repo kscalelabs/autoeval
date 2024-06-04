@@ -2,66 +2,73 @@ name: daily eval
 on:
   schedule:
     - cron: '0 0 * * *'  # Runs every day at midnight UTC
+
 jobs:
   build-docker-run-eval-publish-video:
     name: build docker container and evaluate model
     runs-on: ubuntu-latest
     steps:
-    - name: configure aws credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-    - name: checkout repo
-      uses: actions/checkout@v3
-      with:
-        repository: "haosulab/ManiSkill"
-    - name: build docker container
-      run: docker build -t eval-maniskill -f docker/Dockerfile .
-    - name: upload container to ecr
-      env:
-        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-        AWS_DEFAULT_REGION: us-west-2
-      run: |
-        aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-    - name: run codebuild
-      uses: aws-actions/aws-codebuild-run-build@v1
-      with:
-        project-name: eval
-        disable-source-override: true
-        buildspec-override:   |
-          version: 0.2
-          phases:
-            install:
-              commands:
-                - echo pulling docker image from ecr
-                - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/eval:latest
-            build:
-              commands:
-                - echo running docker container
-                - |
-                docker run 
-                -v $(pwd)/videos:/app/videos
-                eval-maniskill \
-                python -m mani_skill.examples.demo_random_action \
-                -e PickCube-v1 \
-                --env_id="PickCube-v1" \
-                --render-mode="rgb_array" \
-                --record-dir="videos" \
-                --num_envs=1
-              post_build:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: checkout repo
+        uses: actions/checkout@v3
+        with:
+          repository: "haosulab/ManiSkill"
+
+      - name: build docker container
+        run: docker build -t eval-maniskill -f docker/Dockerfile .
+
+      - name: upload container to ecr
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_DEFAULT_REGION: us-west-2
+          IMAGE_REPO_NAME: eval
+          IMAGE_TAG: maniskill
+        run: docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      
+      - name: run codebuild
+        uses: aws-actions/aws-codebuild-run-build@v1
+        with:
+          project-name: eval
+          disable-source-override: true
+          buildspec-override: |
+            version: 0.2
+            phases:
+              install:
                 commands:
-                  - echo eval completed on `date`
-          artifacts:
-            type: zip
-            files:
-              - package.json
-              - package-lock.json
-    - name: upload to s3
-      env:
-        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-      run: |
-        for file in *.mp4; do
-          aws s3 cp "$file" s3://${AWS_S3_BUCKET}/$(basename "$file")
-        done
+                  - echo pulling docker image from ecr
+                  - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/eval:maniskill
+              build:
+                commands:
+                  - echo running docker container
+                  - |
+                    docker run \
+                    -v $(pwd)/videos:/app/videos \
+                    eval:maniskill \
+                    python -m mani_skill.examples.demo_random_action \
+                    -e PickCube-v1 \
+                    --env_id="PickCube-v1" \
+                    --render-mode="rgb_array" \
+                    --record-dir="videos" \
+                    --num_envs=1
+                post_build:
+                  commands:
+                    - echo eval completed on `date`
+            artifacts:
+              type: zip
+              files:
+                - package.json
+                - package-lock.json
+
+      - name: upload to s3
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        run: |
+          for file in *.mp4; do
+            aws s3 cp "$file" s3://${AWS_S3_BUCKET}/$(basename "$file")
+          done
