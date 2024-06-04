@@ -1,18 +1,25 @@
 version: 0.2
-
 phases:
-  pre_build:
+  install:
     commands:
-      - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - echo pulling docker image from ecr
+      - docker pull public.ecr.aws/v6x3n6y1/eval:maniskill
   build:
     commands:
-      - echo Build started on `date`
-      - echo Building the Docker image...
-      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
-      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - echo running docker container
+      - |
+        docker run \
+        -v $(pwd)/videos:/app/videos \
+        eval:maniskill \
+        python -m mani_skill.examples.demo_random_action \
+        -e PickCube-v1 \
+        --env_id="PickCube-v1" \
+        --render-mode="rgb_array" \
+        --record-dir="videos" \
+        --num_envs=1
   post_build:
     commands:
-      - echo Build completed on `date`
-      - echo Pushing the Docker image...
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - echo eval completed on `date`
+artifacts:
+  files:
+    - videos/*.mp4
