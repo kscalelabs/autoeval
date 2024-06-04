@@ -1,7 +1,8 @@
 name: daily eval
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs every day at midnight UTC
+    - cron: '0 0 * * 3'  # Runs every Wednesday at midnight UTC
+  workflow_dispatch:  # Manually trigger the workflow
 
 jobs:
   build-docker-run-eval-publish-video:
