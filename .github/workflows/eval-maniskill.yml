@@ -26,7 +26,7 @@ jobs:
 
       - name: login to ECR
         run: |
-          aws ecr-public get-login-password --region us-west-2 | docker login --username AWS --password-stdin public.ecr.aws/v6x3n6y1
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/v6x3n6y1
 
       - name: tag and push to ECR
         run: |
