@@ -22,7 +22,7 @@ jobs:
           repository: "haosulab/ManiSkill"
 
       - name: build docker container
-        run: docker build -t eval-maniskill -f docker/Dockerfile .
+        run: cd docker && docker build -t eval-maniskill -f Dockerfile .
 
       - name: upload container to ecr
         env:
