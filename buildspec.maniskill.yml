@@ -3,10 +3,10 @@ phases:
   build:
     commands:
       - nvidia-smi
-      - echo running docker container
+      - python -c "import torch; print('PyTorch Version:', torch.__version__)"
       - |
         python -m mani_skill.examples.benchmarking.gpu_sim \
-        -e "PickCube-v1"
+        -e "PickCube-v1" \
         -n 64 \
         --save-video \
         --render-mode="sensors"
