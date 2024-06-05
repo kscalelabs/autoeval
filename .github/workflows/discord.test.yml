@@ -1,4 +1,4 @@
-name: eval maniskill
+name: discord test
 on:
   workflow_dispatch:  # Manually trigger the workflow
 
