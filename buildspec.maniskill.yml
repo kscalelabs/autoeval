@@ -3,6 +3,7 @@ phases:
   build:
     commands:
       - nvidia-smi
+      - echo "downgrade torch for compatibility with CUDA 11.4"
       - python -c "import torch; print('PyTorch Version:', torch.__version__)"
       - pip install torch==2.2.0 torchvision==0.17.0 torchaudio==2.2.0 --index-url https://download.pytorch.org/whl/cu118
       - python -c "import torch; print('PyTorch Version:', torch.__version__)"
@@ -12,10 +13,22 @@ phases:
         -n 64 \
         --save-video \
         --render-mode="sensors"
-      - pwd
-      - ls ./videos/benchmark/
       - cd ./videos/benchmark/
-      - pwd
+      # Rename videos using date
+      - |
+        for file in *.mp4; do
+          mv "$file" "$(date +%Y-%m-%d)_$file"
+        done
+      # Create yml file with metadata (github commit, date, name)
+      - |
+        COMMIT_HASH=$(git rev-parse HEAD)
+        DATE=$(date +%Y.%m.%d)
+        NAME="Benchmark Videos"
+        echo "commit: $COMMIT_HASH" > metadata.yml
+        echo "date: $DATE" >> metadata.yml
+        echo "name: $NAME" >> metadata.yml
 artifacts:
   files:
     - videos/benchmark/*.mp4
+    - videos/benchmark/*.yml
+  discard-paths: yes
