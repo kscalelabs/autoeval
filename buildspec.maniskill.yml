@@ -4,10 +4,8 @@ phases:
     commands:
       - echo pulling docker image from ecr
       - docker pull public.ecr.aws/v6x3n6y1/kscale-eval:maniskill
-      - ls /usr/local/cuda/
       - nvidia-smi
       - nvidia-smi --query-gpu=name --format=csv
-      - nvcc --version
       - docker run --rm public.ecr.aws/v6x3n6y1/kscale-eval:maniskill nvidia-smi
   build:
     commands:
