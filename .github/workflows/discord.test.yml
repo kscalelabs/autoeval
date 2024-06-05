@@ -36,7 +36,7 @@ jobs:
           path: eval/${{ env.DATE }}.maniskill.01.mp4
 
       - name: Download video
-        run: curl -o "${{ steps.s3-video.outputs.url }}"
+        run: curl -o "${{ env.DATE }}.maniskill.01.mp4" "${{ steps.s3-video.outputs.url }}"
   
       - name: Discord Webhook Action
         uses: tsickert/discord-webhook@v5.3.0
