@@ -1,6 +1,6 @@
 version: 0.2
 phases:
-  install:
+  pre_build:
     commands:
       - echo pulling docker image from ecr
       - docker pull public.ecr.aws/v6x3n6y1/kscale-eval:maniskill
