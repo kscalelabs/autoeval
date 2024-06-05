@@ -17,22 +17,22 @@ phases:
       # rename videos using date and enumerate them
       - export DATE=$(date +%Y.%m.%d)
       - |
-        COUNT=1
         for file in *.mp4; do
-          NEW_NAME=$(printf "%s.maniskill.%02d.mp4" "$DATE" "$COUNT")
+          NEW_NAME="${DATE}.maniskill.mp4"
           mv "$file" "$NEW_NAME"
-          COUNT=$((COUNT + 1))
         done
       # Create yml file with metadata (github commit, date, name, environment)
       - |
         METADATA_FILE="${DATE}.maniskill.yml"
         NAME="mani_skill.examples.benchmarking.gpu_sim"
-        ENV="PickCube-v1"
-        COMMIT_HASH=$(git rev-parse HEAD)
         echo "name: $NAME" >> "$METADATA_FILE"
-        echo "env: $ENV" >> "$METADATA_FILE"
-        echo "commit: $COMMIT_HASH" > "$METADATA_FILE"
         echo "date: $DATE" >> "$METADATA_FILE"
+        ENV="PickCube-v1"
+        echo "env: $ENV" >> "$METADATA_FILE"
+        GIT_REPO=$(git config --get remote.origin.url)
+        GIT_HASH=$(git rev-parse HEAD)
+        echo "git: $GIT_REPO" >> "$METADATA_FILE"
+        echo "hash: $GIT_HASH" >> "$METADATA_FILE"
 artifacts:
   files:
     - videos/benchmark/*.mp4

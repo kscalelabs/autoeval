@@ -1,19 +1,11 @@
 name: discord test
 on:
-  workflow_dispatch:  # Manually trigger the workflow
-
+  workflow_dispatch:
 jobs:
   eval-maniskill:
     name: eval maniskill
     runs-on: ubuntu-latest
     steps:
-    #   - name: configure aws credentials
-    #     uses: aws-actions/configure-aws-credentials@v1
-    #     with:
-    #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #       aws-region: us-east-2 # kscale codebuild project is on us-east-2
-
       - name: Set DATE environment variable
         run: echo "DATE=$(date +%Y.%m.%d)" >> $GITHUB_ENV
 
@@ -42,13 +34,12 @@ jobs:
 
       - name: Download metadata into environment variable
         run: |
-            curl -o "${{ env.DATE }}.maniskill.yml" "${{ steps.s3-metadata.outputs.url }}"
-            echo METADATA=$(cat "${{ env.DATE }}.maniskill.yml") >> $GITHUB_ENV
-  
+          curl -o "${{ env.DATE }}.maniskill.yml" "${{ steps.s3-metadata.outputs.url }}"
+          echo METADATA=$(cat "${{ env.DATE }}.maniskill.yml") >> $GITHUB_ENV
+
       - name: Discord Webhook Action
         uses: tsickert/discord-webhook@v5.3.0
         with:
           webhook-url: ${{ secrets.WEBHOOK_URL }}
           content: "```yaml\n${{ env.METADATA }}\n```"
-          filename:  ${{ env.DATE }}.maniskill.01.mp4
-  
+          filename: ${{ env.DATE }}.maniskill.01.mp4
