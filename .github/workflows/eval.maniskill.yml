@@ -50,36 +50,11 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2 # our codebuild project is on us-west-2
+          aws-region: us-east-2 # kscale codebuild project is on us-east-2
 
       - name: run codebuild
         uses: aws-actions/aws-codebuild-run-build@v1
         with:
           project-name: eval
           disable-source-override: true
-          buildspec-override: |
-            version: 0.2
-            phases:
-              install:
-                commands:
-                  - echo pulling docker image from ecr
-                  - docker pull public.ecr.aws/v6x3n6y1/kscale-eval:maniskill
-              build:
-                commands:
-                  - echo running docker container
-                  - |
-                    docker run \
-                    -v $(pwd)/videos:/app/videos \
-                    kscale-eval:maniskill \
-                    python -m mani_skill.examples.demo_random_action \
-                    -e PickCube-v1 \
-                    --env_id="PickCube-v1" \
-                    --render-mode="rgb_array" \
-                    --record-dir="videos" \
-                    --num_envs=1
-              post_build:
-                commands:
-                  - echo eval completed on `date`
-            artifacts:
-              files:
-                - videos/*.mp4
+          buildspec-override: buildspec.maniskill.yml
