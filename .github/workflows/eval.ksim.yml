@@ -25,7 +25,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          repository: "kscalelabs/ksim"
+          repository: "hu-po/ksim"
 
       - name: Build, tag, and push docker image to Amazon ECR Public
         env:
