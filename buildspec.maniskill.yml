@@ -1,6 +1,6 @@
 version: 0.2
 phases:
-  eval:
+  build:
     commands:
       - nvidia-smi
       - echo running docker container
