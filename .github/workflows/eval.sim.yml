@@ -50,5 +50,5 @@ jobs:
           project-name: eval
           disable-source-override: true
           buildspec-override: buildspec.sim.yml
-          compute-type-override: BUILD_GENERAL1_SMALL
+          compute-type-override: BUILD_GENERAL1_LARGE
           environment-type-override: LINUX_GPU_CONTAINER
