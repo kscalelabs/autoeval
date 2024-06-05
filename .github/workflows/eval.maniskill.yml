@@ -14,7 +14,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: us-east-1 # public registries are only available in us-east-1
 
       # - name: Configure AWS credentials
       #   uses: aws-actions/configure-aws-credentials@v4
@@ -36,7 +36,7 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR Public
         env:
           REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
-          REGISTRY_ALIAS: public.ecr.aws/v6x3n6y1
+          REGISTRY_ALIAS: v6x3n6y1
           REPOSITORY: kscale-eval
           IMAGE_TAG: maniskill
         run: |
