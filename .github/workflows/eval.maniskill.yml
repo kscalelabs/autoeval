@@ -5,8 +5,8 @@ on:
   workflow_dispatch:  # Manually trigger the workflow
 
 jobs:
-  build-docker-run-eval-publish-video:
-    name: build docker container and evaluate model
+  eval-maniskill:
+    name: eval maniskill
     runs-on: ubuntu-latest
     steps:
       - name: configure aws credentials
@@ -16,7 +16,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1 # public registries are only available in us-east-1
 
-      # TODO: Use roles instead of admin github-actions user
+      # TODO: Use roles instead of github-actions user w/ admin permissions
       # - name: Configure AWS credentials
       #   uses: aws-actions/configure-aws-credentials@v4
       #   with:
