@@ -3,14 +3,14 @@ phases:
   install:
     commands:
       - echo pulling docker image from ecr
-      - docker pull public.ecr.aws/v6x3n6y1/eval:maniskill
+      - docker pull public.ecr.aws/v6x3n6y1/kscale-eval:maniskill
   build:
     commands:
       - echo running docker container
       - |
         docker run \
         -v $(pwd)/videos:/app/videos \
-        eval:maniskill \
+        kscale-eval:maniskill \
         python -m mani_skill.examples.demo_random_action \
         -e PickCube-v1 \
         --env_id="PickCube-v1" \
