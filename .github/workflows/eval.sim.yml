@@ -1,4 +1,4 @@
-name: eval maniskill
+name: eval sim
 on:
   schedule:
     - cron: '0 0 * * 3'  # Runs every Wednesday at midnight UTC
@@ -29,28 +29,21 @@ jobs:
         with:
           registry-type: public
 
-      # - name: Checkout repository
-      #   uses: actions/checkout@v3
-      #   with:
-      #     repository: "kscalelabs/ManiSkill"
-
-      # - name: Build, tag, and push docker image to Amazon ECR Public
-      #   env:
-      #     REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
-      #     REGISTRY_ALIAS: v6x3n6y1
-      #     REPOSITORY: kscale-eval
-      #     IMAGE_TAG: maniskill
-      #   run: |
-      #     cd docker 
-      #     docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
-      #     docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
-
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Checkout repository
+        uses: actions/checkout@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2 # our codebuild project is on us-west-2
+          repository: "kscalelabs/sim"
+
+      - name: Build, tag, and push docker image to Amazon ECR Public
+        env:
+          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+          REGISTRY_ALIAS: v6x3n6y1
+          REPOSITORY: kscale-eval
+          IMAGE_TAG: sim
+        run: |
+          cd docker 
+          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
 
       - name: run codebuild
         uses: aws-actions/aws-codebuild-run-build@v1
@@ -63,14 +56,14 @@ jobs:
               install:
                 commands:
                   - echo pulling docker image from ecr
-                  - docker pull public.ecr.aws/v6x3n6y1/kscale-eval:maniskill
+                  - docker pull public.ecr.aws/v6x3n6y1/kscale-eval:sim
               build:
                 commands:
                   - echo running docker container
                   - |
                     docker run \
                     -v $(pwd)/videos:/app/videos \
-                    kscale-eval:maniskill \
+                    kscale-eval:sim \
                     python -m mani_skill.examples.demo_random_action \
                     -e PickCube-v1 \
                     --env_id="PickCube-v1" \
