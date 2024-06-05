@@ -11,7 +11,7 @@ phases:
         docker run \
         -v $(pwd)/videos:/app/videos \
         public.ecr.aws/v6x3n6y1/kscale-eval:sim \
-        python sim/humanoid_gym/play.py \
+        python3 sim/humanoid_gym/play.py \
         --task legs_ppo \
         --sim_device cpu
   post_build:

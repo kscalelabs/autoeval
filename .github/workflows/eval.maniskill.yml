@@ -53,3 +53,4 @@ jobs:
           buildspec-override: buildspec.maniskill.yml
           compute-type-override: BUILD_GENERAL1_LARGE
           environment-type-override: LINUX_GPU_CONTAINER
+          image-override: public.ecr.aws/v6x3n6y1/kscale-eval:maniskill

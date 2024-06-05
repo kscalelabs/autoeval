@@ -1,27 +1,15 @@
 version: 0.2
 phases:
-  pre_build:
+  eval:
     commands:
-      - echo pulling docker image from ecr
-      - docker pull public.ecr.aws/v6x3n6y1/kscale-eval:maniskill
       - nvidia-smi
-      - nvidia-smi --query-gpu=name --format=csv
-      - docker run --rm public.ecr.aws/v6x3n6y1/kscale-eval:maniskill nvidia-smi
-  build:
-    commands:
       - echo running docker container
       - |
-        docker run \
-        -v $(pwd)/videos:/app/videos \
-        public.ecr.aws/v6x3n6y1/kscale-eval:maniskill \
         python -m mani_skill.examples.benchmarking.gpu_sim \
         -e "PickCube-v1"
         -n 64 \
         --save-video \
         --render-mode="sensors"
-  post_build:
-    commands:
-      - echo eval completed on `date`
 artifacts:
   files:
     - videos/*.mp4
