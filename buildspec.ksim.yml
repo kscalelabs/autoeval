@@ -11,12 +11,9 @@ phases:
         docker run \
         -v $(pwd)/videos:/app/videos \
         public.ecr.aws/v6x3n6y1/kscale-eval:ksim \
-        python -m mani_skill.examples.demo_random_action \
-        -e PickCube-v1 \
-        --env_id="PickCube-v1" \
-        --render-mode="rgb_array" \
-        --record-dir="videos" \
-        --num_envs=1
+        python play.py \
+        --config experiments/default_humanoid_walk.yaml \
+        --use_mujoco
   post_build:
     commands:
       - echo eval completed on `date`

@@ -11,12 +11,9 @@ phases:
         docker run \
         -v $(pwd)/videos:/app/videos \
         public.ecr.aws/v6x3n6y1/kscale-eval:sim \
-        python -m mani_skill.examples.demo_random_action \
-        -e PickCube-v1 \
-        --env_id="PickCube-v1" \
-        --render-mode="rgb_array" \
-        --record-dir="videos" \
-        --num_envs=1
+        python sim/humanoid_gym/play.py \
+        --task legs_ppo \
+        --sim_device cpu
   post_build:
     commands:
       - echo eval completed on `date`
