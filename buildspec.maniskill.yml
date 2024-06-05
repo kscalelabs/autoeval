@@ -12,6 +12,10 @@ phases:
         -n 64 \
         --save-video \
         --render-mode="sensors"
+      - pwd
+      - ls ./videos/benchmark/
+      - cd ./videos/benchmark/
+      - pwd
 artifacts:
   files:
-    - videos/*.mp4
+    - videos/benchmark/*.mp4
