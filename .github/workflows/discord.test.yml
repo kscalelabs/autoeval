@@ -7,24 +7,24 @@ jobs:
     name: eval maniskill
     runs-on: ubuntu-latest
     steps:
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2 # kscale codebuild project is on us-east-2
+    #   - name: configure aws credentials
+    #     uses: aws-actions/configure-aws-credentials@v1
+    #     with:
+    #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #       aws-region: us-east-2 # kscale codebuild project is on us-east-2
 
       - name: Set DATE environment variable
         run: echo "DATE=$(date +%Y.%m.%d)" >> $GITHUB_ENV
 
-      - name: Generate S3 PreSigned URL
-        uses: anton-yurchenko/s3-pre-signed-url@v1
-        id: s3-metadata
-        with:
-          access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          bucket: dpsh-eval
-          path: eval/${{ env.DATE }}.maniskill.yml
+    #   - name: Generate S3 PreSigned URL
+    #     uses: anton-yurchenko/s3-pre-signed-url@v1
+    #     id: s3-metadata
+    #     with:
+    #       access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #       secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #       bucket: dpsh-eval
+    #       path: eval/${{ env.DATE }}.maniskill.yml
 
       - name: Generate S3 PreSigned URL
         uses: anton-yurchenko/s3-pre-signed-url@v1
@@ -32,6 +32,7 @@ jobs:
         with:
           access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: us-east-2
           bucket: dpsh-eval
           path: eval/${{ env.DATE }}.maniskill.01.mp4
 
