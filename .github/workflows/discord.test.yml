@@ -40,5 +40,5 @@ jobs:
         with:
           webhook-url: ${{ secrets.WEBHOOK_URL }}
           content: "New evaluation results are available!"
-          filename:  ${{ steps.s3-metadata.outputs.url }}
+          embed-url:  ${{ steps.s3-video.outputs.url }}
   
