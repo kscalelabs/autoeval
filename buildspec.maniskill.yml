@@ -4,6 +4,8 @@ phases:
     commands:
       - nvidia-smi
       - python -c "import torch; print('PyTorch Version:', torch.__version__)"
+      - pip install torch==2.2.0 torchvision==0.17.0 torchaudio==2.2.0 --index-url https://download.pytorch.org/whl/cu118
+      - python -c "import torch; print('PyTorch Version:', torch.__version__)"
       - |
         python -m mani_skill.examples.benchmarking.gpu_sim \
         -e "PickCube-v1" \
