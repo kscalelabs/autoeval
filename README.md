@@ -11,3 +11,4 @@ auto eval of policies in sim, runs GitHub actions for:
 - https://github.com/aws-actions/aws-codebuild-run-build
 - https://github.com/aws-actions/amazon-ecr-login
 - https://docs.aws.amazon.com/codebuild/latest/userguide/troubleshooting.html
+- https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-compute-types.html#environment.types

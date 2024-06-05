@@ -58,6 +58,5 @@ jobs:
           project-name: eval
           disable-source-override: true
           buildspec-override: buildspec.maniskill.yml
-          # https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-compute-types.html#environment.types
           compute-type-override: BUILD_GENERAL1_LARGE
           environment-type-override: LINUX_GPU_CONTAINER
