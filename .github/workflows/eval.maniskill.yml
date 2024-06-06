@@ -38,7 +38,7 @@ jobs:
           buildspec-override: buildspec.maniskill.yml
           compute-type-override: BUILD_GENERAL1_LARGE
           environment-type-override: LINUX_GPU_CONTAINER
-          image-override: 339713082920.dkr.ecr.us-east-2.amazonaws.com/dpsh-eval:maniskill
+          image-override: ${{ steps.login-ecr.outputs.registry }}/dpsh-eval:maniskill
       - name: Set DATE environment variable
         run: echo "DATE=$(date +%Y.%m.%d)" >> $GITHUB_ENV
       - name: Generate S3 PreSigned URL
