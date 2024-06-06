@@ -10,13 +10,9 @@ phases:
         --config experiments/stompy_walk.yaml \
         --params_path=weights/stompy_walk.pkl \
         --use_mujoco
-      # rename videos using date and enumerate them
+      # rename video using date
       - export DATE=$(date +%Y.%m.%d)
-      - |
-        for file in *.mp4; do
-          NEW_NAME="${DATE}.ksim.mp4"
-          mv "$file" "$NEW_NAME"
-        done
+      - mv video.mp4 "${DATE}.ksim.mp4" 
       # Create yml file with metadata (github commit, date, name, environment)
       - |
         METADATA_FILE="${DATE}.ksim.yml"
@@ -31,6 +27,6 @@ phases:
         echo "hash: $GIT_HASH" >> "$METADATA_FILE"
 artifacts:
   files:
-    - ./*.mp4
-    - ./*.yml
+    - /src/ksim/mjx_gym/*.ksim.mp4
+    - /src/ksim/mjx_gym/*.ksim.yml
   discard-paths: yes

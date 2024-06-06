@@ -8,6 +8,8 @@ jobs:
     name: eval maniskill
     runs-on: ubuntu-latest
     steps:
+      - name: Set DATE environment variable
+        run: echo "DATE=$(date +%Y.%m.%d)" >> $GITHUB_ENV
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -28,8 +30,8 @@ jobs:
           IMAGE_TAG: maniskill
         run: |
           cd docker 
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Dockerfile .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG.${{ env.DATE }} -f Dockerfile .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG.${{ env.DATE }}
       - name: Run CodeBuild
         uses: aws-actions/aws-codebuild-run-build@v1
         with:
@@ -38,10 +40,8 @@ jobs:
           buildspec-override: buildspec.maniskill.yml
           compute-type-override: BUILD_GENERAL1_LARGE
           environment-type-override: LINUX_GPU_CONTAINER
-          image-override: ${{ steps.login-ecr.outputs.registry }}/dpsh-eval:maniskill
+          image-override: ${{ steps.login-ecr.outputs.registry }}/dpsh-eval:maniskill.${{ env.DATE }}
           image-pull-credentials-type-override: SERVICE_ROLE
-      - name: Set DATE environment variable
-        run: echo "DATE=$(date +%Y.%m.%d)" >> $GITHUB_ENV
       - name: Generate S3 PreSigned URL
         uses: anton-yurchenko/s3-pre-signed-url@v1
         id: s3-metadata

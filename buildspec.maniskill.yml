@@ -14,7 +14,7 @@ phases:
         --save-video \
         --render-mode="sensors"
       - cd ./videos/benchmark/
-      # rename videos using date and enumerate them
+      # rename video using date
       - export DATE=$(date +%Y.%m.%d)
       - |
         for file in *.mp4; do
@@ -35,6 +35,6 @@ phases:
         echo "hash: $GIT_HASH" >> "$METADATA_FILE"
 artifacts:
   files:
-    - videos/benchmark/*.mp4
-    - videos/benchmark/*.yml
+    - videos/benchmark/*maniskill.mp4
+    - videos/benchmark/*maniskill.yml
   discard-paths: yes
