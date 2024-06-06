@@ -37,7 +37,7 @@ jobs:
           buildspec-override: buildspec.ksim.yml
           compute-type-override: BUILD_GENERAL1_LARGE
           environment-type-override: LINUX_GPU_CONTAINER
-          image-override: public.ecr.aws/v6x3n6y1/kscale-eval:ksim
+          image-override: 339713082920.dkr.ecr.us-east-2.amazonaws.com/dpsh-eval:ksim
       - name: Set DATE environment variable
         run: echo "DATE=$(date +%Y.%m.%d)" >> $GITHUB_ENV
       - name: Generate S3 PreSigned URL
