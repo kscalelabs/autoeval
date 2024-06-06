@@ -20,7 +20,7 @@ phases:
       # Create yml file with metadata (github commit, date, name, environment)
       - |
         METADATA_FILE="${DATE}.ksim.yml"
-        NAME="play.py experiments/default_humanoid_walk.yaml"
+        NAME="mjx_gym/play.py experiments/default_humanoid_walk.yaml weights/stompy_walk.pkl"
         echo "name: $NAME" >> "$METADATA_FILE"
         echo "date: $DATE" >> "$METADATA_FILE"
         ENV="PickCube-v1"
