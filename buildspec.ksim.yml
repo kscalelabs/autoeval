@@ -8,7 +8,8 @@ phases:
       - |
         python3 play.py \
         --config experiments/default_humanoid_walk.yaml \
-        --use_mujoco
+        --use_mujoco \
+        --params_path=weights/stompy_walk.pkl
       # rename videos using date and enumerate them
       - export DATE=$(date +%Y.%m.%d)
       - |
