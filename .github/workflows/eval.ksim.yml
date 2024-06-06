@@ -38,8 +38,8 @@ jobs:
           REPOSITORY: dpsh-eval
           IMAGE_TAG: ksim
         run: |
-          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG -f docker/Dockerfile.eval .
-          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f docker/Dockerfile.eval .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
