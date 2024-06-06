@@ -37,7 +37,8 @@ jobs:
           buildspec-override: buildspec.sim.yml
           compute-type-override: BUILD_GENERAL1_LARGE
           environment-type-override: LINUX_GPU_CONTAINER
-          image-override: 339713082920.dkr.ecr.us-east-2.amazonaws.com/dpsh-eval:sim
+          image-override: ${{ steps.login-ecr.outputs.registry }}/dpsh-eval:sim
+          image-pull-credentials-type-override: SERVICE_ROLE
       - name: Set DATE environment variable
         run: echo "DATE=$(date +%Y.%m.%d)" >> $GITHUB_ENV
       - name: Generate S3 PreSigned URL
