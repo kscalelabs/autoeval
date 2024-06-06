@@ -28,7 +28,7 @@ jobs:
           IMAGE_TAG: maniskill
         run: |
           cd docker 
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f docker/Dockerfile.eval .
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Dockerfile.eval .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
       - name: Run CodeBuild
         uses: aws-actions/aws-codebuild-run-build@v1
