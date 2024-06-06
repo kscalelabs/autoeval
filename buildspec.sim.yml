@@ -1,22 +1,38 @@
 version: 0.2
 phases:
-  pre_build:
-    commands:
-      - echo pulling docker image from ecr
-      - docker pull public.ecr.aws/v6x3n6y1/kscale-eval:sim
   build:
     commands:
-      - echo running docker container
+      - nvidia-smi
+      # downgrade torch for compatibility with CUDA 11.4
+      - python -c "import torch; print('PyTorch Version:', torch.__version__)"
+      - pip install torch==2.2.0 torchvision==0.17.0 torchaudio==2.2.0 --index-url https://download.pytorch.org/whl/cu118
+      - python -c "import torch; print('PyTorch Version:', torch.__version__)"
       - |
-        docker run \
-        -v $(pwd)/videos:/app/videos \
-        public.ecr.aws/v6x3n6y1/kscale-eval:sim \
         python3 sim/humanoid_gym/play.py \
         --task legs_ppo \
         --sim_device cpu
-  post_build:
-    commands:
-      - echo eval completed on `date`
+      - cd ./videos/benchmark/
+      # rename videos using date and enumerate them
+      - export DATE=$(date +%Y.%m.%d)
+      - |
+        for file in *.mp4; do
+          NEW_NAME="${DATE}.maniskill.mp4"
+          mv "$file" "$NEW_NAME"
+        done
+      # Create yml file with metadata (github commit, date, name, environment)
+      - |
+        METADATA_FILE="${DATE}.maniskill.yml"
+        NAME="mani_skill.examples.benchmarking.gpu_sim"
+        echo "name: $NAME" >> "$METADATA_FILE"
+        echo "date: $DATE" >> "$METADATA_FILE"
+        ENV="PickCube-v1"
+        echo "env: $ENV" >> "$METADATA_FILE"
+        GIT_REPO=$(git config --get remote.origin.url)
+        GIT_HASH=$(git rev-parse HEAD)
+        echo "git: $GIT_REPO" >> "$METADATA_FILE"
+        echo "hash: $GIT_HASH" >> "$METADATA_FILE"
 artifacts:
   files:
-    - videos/*.mp4
+    - videos/benchmark/*.mp4
+    - videos/benchmark/*.yml
+  discard-paths: yes

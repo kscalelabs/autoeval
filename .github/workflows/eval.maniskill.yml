@@ -1,51 +1,45 @@
 name: eval maniskill
 on:
+  workflow_dispatch:  # manually trigger the workflow
   schedule:
-    - cron: '0 0 * * 5'  # Runs every Friday at midnight UTC
-  workflow_dispatch:  # Manually trigger the workflow
-
+    - cron: '0 0 * * 5'  # runs every Friday at midnight UTC
 jobs:
   eval-maniskill:
     name: eval maniskill
     runs-on: ubuntu-latest
     steps:
-      - name: configure aws credentials
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1 # public registries are only available in us-east-1
-
       - name: Login to Amazon ECR Public
         id: login-ecr-public
         uses: aws-actions/amazon-ecr-login@v2
         with:
           registry-type: public
-
-      # - name: Checkout repository
-      #   uses: actions/checkout@v3
-      #   with:
-      #     repository: "kscalelabs/ManiSkill"
-
-      # - name: Build, tag, and push docker image to Amazon ECR Public
-      #   env:
-      #     REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
-      #     REGISTRY_ALIAS: v6x3n6y1
-      #     REPOSITORY: kscale-eval
-      #     IMAGE_TAG: maniskill
-      #   run: |
-      #     cd docker 
-      #     docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
-      #     docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
-
-      - name: configure aws credentials
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          repository: "kscalelabs/ManiSkill"
+      - name: Build, tag, and push docker image to Amazon ECR Public
+        env:
+          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+          REGISTRY_ALIAS: v6x3n6y1
+          REPOSITORY: kscale-eval
+          IMAGE_TAG: maniskill
+        run: |
+          cd docker 
+          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2 # kscale codebuild project is on us-east-2
-
-      - name: run codebuild
+      - name: Run CodeBuild
         uses: aws-actions/aws-codebuild-run-build@v1
         with:
           project-name: eval
@@ -54,10 +48,8 @@ jobs:
           compute-type-override: BUILD_GENERAL1_LARGE
           environment-type-override: LINUX_GPU_CONTAINER
           image-override: public.ecr.aws/v6x3n6y1/kscale-eval:maniskill
-
       - name: Set DATE environment variable
         run: echo "DATE=$(date +%Y.%m.%d)" >> $GITHUB_ENV
-
       - name: Generate S3 PreSigned URL
         uses: anton-yurchenko/s3-pre-signed-url@v1
         id: s3-metadata
@@ -67,7 +59,6 @@ jobs:
           region: us-east-2
           bucket: dpsh-eval
           path: eval/${{ env.DATE }}.maniskill.yml
-
       - name: Generate S3 PreSigned URL
         uses: anton-yurchenko/s3-pre-signed-url@v1
         id: s3-video
@@ -77,15 +68,12 @@ jobs:
           region: us-east-2
           bucket: dpsh-eval
           path: eval/${{ env.DATE }}.maniskill.mp4
-
       - name: Download video
         run: curl -o "${{ env.DATE }}.maniskill.mp4" "${{ steps.s3-video.outputs.url }}"
-
       - name: Download metadata into environment variable
         run: |
           curl -o "${{ env.DATE }}.maniskill.yml" "${{ steps.s3-metadata.outputs.url }}"
           echo METADATA=$(cat "${{ env.DATE }}.maniskill.yml") >> $GITHUB_ENV
-
       - name: Discord Webhook Action
         uses: tsickert/discord-webhook@v5.3.0
         with:
