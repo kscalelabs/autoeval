@@ -1,0 +1,27 @@
+version: 0.2
+phases:
+  build:
+    commands:
+      - nvidia-smi
+      - pwd
+      - python3 /src/loco-mujoco/examples/simple_mushroom_env/example_unitree_a1.py
+      # rename video using date
+      - export DATE=$(date +%Y.%m.%d)
+      - mv video.mp4 "${DATE}.loco-mujoco.mp4" 
+      # Create yml file with metadata (github commit, date, name, environment)
+      - |
+        METADATA_FILE="${DATE}.loco-mujoco.yml"
+        NAME="examples/simple_mushroom_env/example_unitree_a1.py"
+        echo "name: $NAME" >> "$METADATA_FILE"
+        echo "date: $DATE" >> "$METADATA_FILE"
+        ENV="Unitree_a1"
+        echo "env: $ENV" >> "$METADATA_FILE"
+        GIT_REPO=$(git config --get remote.origin.url)
+        GIT_HASH=$(git rev-parse HEAD)
+        echo "git: $GIT_REPO" >> "$METADATA_FILE"
+        echo "hash: $GIT_HASH" >> "$METADATA_FILE"
+artifacts:
+  files:
+    - /src/*.loco-mujoco.mp4
+    - /src/*.loco-mujoco.yml
+  discard-paths: yes

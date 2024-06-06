@@ -1,11 +1,11 @@
-name: eval ksim
+name: eval loco-mujoco
 on:
   workflow_dispatch:  # manually trigger the workflow
   schedule:
     - cron: '0 0 * * 5'  # runs every Friday at midnight UTC
 jobs:
-  eval-ksim:
-    name: eval ksim
+  eval-loco-mujoco:
+    name: eval loco-mujoco
     runs-on: ubuntu-latest
     steps:
       - name: Set DATE environment variable
@@ -22,12 +22,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          repository: "kscalelabs/ksim"
+          repository: "hu-po/loco-mujoco"
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: dpsh-eval
-          IMAGE_TAG: ksim
+          IMAGE_TAG: loco-mujoco
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG.${{ env.DATE }} -f docker/Dockerfile.eval .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG.${{ env.DATE }}
@@ -36,10 +36,10 @@ jobs:
         with:
           project-name: eval
           disable-source-override: true
-          buildspec-override: buildspec.ksim.yml
+          buildspec-override: buildspec.loco-mujoco.yml
           compute-type-override: BUILD_GENERAL1_LARGE
           environment-type-override: LINUX_GPU_CONTAINER
-          image-override: ${{ steps.login-ecr.outputs.registry }}/dpsh-eval:ksim.${{ env.DATE }}
+          image-override: ${{ steps.login-ecr.outputs.registry }}/dpsh-eval:loco-mujoco.${{ env.DATE }}
           image-pull-credentials-type-override: SERVICE_ROLE
       - name: Generate S3 PreSigned URL
         uses: anton-yurchenko/s3-pre-signed-url@v1
@@ -49,7 +49,7 @@ jobs:
           secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           region: us-east-2
           bucket: dpsh-eval
-          path: eval/${{ env.DATE }}.ksim.yml
+          path: eval/${{ env.DATE }}.loco-mujoco.yml
       - name: Generate S3 PreSigned URL
         uses: anton-yurchenko/s3-pre-signed-url@v1
         id: s3-video
@@ -58,16 +58,16 @@ jobs:
           secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           region: us-east-2
           bucket: dpsh-eval
-          path: eval/${{ env.DATE }}.ksim.mp4
+          path: eval/${{ env.DATE }}.loco-mujoco.mp4
       - name: Download video
-        run: curl -o "${{ env.DATE }}.ksim.mp4" "${{ steps.s3-video.outputs.url }}"
+        run: curl -o "${{ env.DATE }}.loco-mujoco.mp4" "${{ steps.s3-video.outputs.url }}"
       - name: Download metadata into environment variable
         run: |
-          curl -o "${{ env.DATE }}.ksim.yml" "${{ steps.s3-metadata.outputs.url }}"
-          echo METADATA=$(cat "${{ env.DATE }}.ksim.yml") >> $GITHUB_ENV
+          curl -o "${{ env.DATE }}.loco-mujoco.yml" "${{ steps.s3-metadata.outputs.url }}"
+          echo METADATA=$(cat "${{ env.DATE }}.loco-mujoco.yml") >> $GITHUB_ENV
       - name: Discord Webhook Action
         uses: tsickert/discord-webhook@v5.3.0
         with:
           webhook-url: ${{ secrets.WEBHOOK_URL }}
           content: "```yaml\n${{ env.METADATA }}\n```"
-          filename: ${{ env.DATE }}.ksim.mp4
+          filename: ${{ env.DATE }}.loco-mujoco.mp4
