@@ -7,9 +7,9 @@ phases:
       - cd /src/ksim/mjx_gym
       - |
         python3 play.py \
-        --config experiments/default_humanoid_walk.yaml \
-        --use_mujoco \
-        --params_path=weights/stompy_walk.pkl
+        --config experiments/stompy_walk.yaml \
+        --params_path=weights/stompy_walk.pkl \
+        --use_mujoco
       # rename videos using date and enumerate them
       - export DATE=$(date +%Y.%m.%d)
       - |
