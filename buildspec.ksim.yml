@@ -29,6 +29,6 @@ phases:
         echo "hash: $GIT_HASH" >> "$METADATA_FILE"
 artifacts:
   files:
-    - *.mp4
-    - *.yml
+    - ./*.mp4
+    - ./*.yml
   discard-paths: yes
