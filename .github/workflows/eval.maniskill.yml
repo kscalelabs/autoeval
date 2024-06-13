@@ -1,8 +1,8 @@
 name: eval maniskill
 on:
   workflow_dispatch:  # manually trigger the workflow
-  schedule:
-    - cron: '0 0 * * 5'  # runs every Friday at midnight UTC
+  # schedule:
+  #   - cron: '0 0 * * 5'  # runs every Friday at midnight UTC
 jobs:
   eval-maniskill:
     name: eval maniskill
